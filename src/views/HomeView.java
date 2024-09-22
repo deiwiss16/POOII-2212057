@@ -13,7 +13,7 @@ public class HomeView extends JPanel{
     private final HomeController homeController;
     private final JFrame mainFrame;    
     private final static int MAIN_FRAME_WIDTH = 800;
-    private final static int MAIN_FRAME_HEIGHT = 350;
+    private final static int MAIN_FRAME_HEIGHT = 400;
     private final static int MAIN_FRAME_X = 100;
     private final static int MAIN_FRAME_Y = 100;
     
@@ -38,9 +38,12 @@ public class HomeView extends JPanel{
     private void make_tabs() {
         JTabbedPane tpnEvents = new JTabbedPane(JTabbedPane.TOP);
         //tpnEvents.add("Prueba", new Panel());
+        
+        tpnEvents.addTab("New guest", homeController.getNewGuestView());
+        
         tpnEvents.addTab("New event", homeController.getNewEventView());
         tpnEvents.addTab("Events", homeController.getEventListView());
-        tpnEvents.addTab("New guest", homeController.getNewGuestView());
+        
         add(tpnEvents, BorderLayout.CENTER);
     }
 }

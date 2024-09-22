@@ -20,7 +20,7 @@ public class GuestModel {
                 guest.getNombre() + ";" + 
                 guest.getNumero() + ";" + 
                 guest.getGenero() + ";" + 
-                sdf.format(guest.getDate())+ ";" + 
+                sdf.format(guest.getFechaNacimiento())+ ";" + 
                 guest.getDireccion() + ";" +
                 guest.getTerminosCondiciones()
             );

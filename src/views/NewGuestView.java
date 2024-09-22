@@ -1,28 +1,34 @@
 package views;
 
 import controllers.NewGuestController;
+import enums.Frequency;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import models.Event;
+import models.Guest;
+import models.SchedulerUtil;
 
 public class NewGuestView extends JPanel {
-    private JTextField txtName;
-    private JTextField txtNumber;
-    private JRadioButton rdbtnMale;
-    private JRadioButton rdbtnFemale;
-    private JComboBox<String> cmbDay;
-    private JComboBox<String> cmbMonth;
+    private JTextField txtNombre;
+    private JTextField txtNumero;
+    private JRadioButton rdbtnMasculino;
+    private JRadioButton rdbtnFemenino;
+    private JComboBox<String> cmbDia;
+    private JComboBox<String> cmbMes;
     private JComboBox<String> cmbYear;
-    private JTextField txtAddress;
-    private JCheckBox cbxTermsConditions;
+    private JTextField txtDireccion;
+    private JCheckBox cbxTerminosCondiciones;
     private final NewGuestController newGuestController;
     
     public NewGuestView(NewGuestController newGuestController) {
@@ -33,19 +39,22 @@ public class NewGuestView extends JPanel {
         make_field_number();
         make_field_genre();
         make_field_birth();
-        /*make_field_address();
+        make_field_address();
         make_field_term_condition();
-        make_btn_register();*/
+        make_btn_register();
         make_btn_clean();
         
     }
     
     private void cleanFields() {
-        txtName.setText("");
-        txtNumber.setText("");
-        rdbtnMale.setSelected(true);
-        txtAddress.setText("");
-        cbxTermsConditions.setSelected(false);
+        txtNombre.setText("");
+        txtNumero.setText("");
+        rdbtnMasculino.setSelected(true);
+        cmbDia.setSelectedIndex(0);
+        cmbMes.setSelectedIndex(0);
+        cmbYear.setSelectedIndex(0);
+        txtDireccion.setText("");
+        cbxTerminosCondiciones.setSelected(false);
     }
     
     private void make_frame() { 
@@ -53,75 +62,141 @@ public class NewGuestView extends JPanel {
     }
 
     private void make_field_name() {
-        JLabel lblName = new JLabel("Ingresar Nombre");
-        lblName.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblName.setBounds(29, 29, 134, 14);
-        add(lblName);
+        JLabel lblNombre = new JLabel("Ingresar Nombre:");
+        lblNombre.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblNombre.setBounds(15, 15, 134, 14);
+        add(lblNombre);
         
-        txtName = new JTextField();
-        txtName.setBounds(169, 26, 196, 20);
-        add(txtName);
-        txtName.setColumns(10);
+        txtNombre = new JTextField();
+        txtNombre.setBounds(180, 15, 196, 20);
+        add(txtNombre);
+        txtNombre.setColumns(10);
        
     }
     private void make_field_number(){
-        JLabel lblNumber = new JLabel("Ingrese número de celular");
-        lblNumber.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblNumber.setBounds(29, 71, 104, 14);
-        add(lblNumber);
-
-        // Makes text field
-        txtNumber = new JTextField();
-        txtNumber.setBounds(169, 68, 196, 20);
-        add(txtNumber);
-        txtNumber.setColumns(10);
+        JLabel lblNumero = new JLabel("Ingrese número de celular:");
+        lblNumero.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblNumero.setBounds(15, 60, 150, 14);
+        add(lblNumero);
+        
+        txtNumero = new JTextField();
+        txtNumero.setBounds(180, 60, 196, 20);
+        add(txtNumero);
+        txtNumero.setColumns(10);
     }
     private void make_field_genre(){
-        final ButtonGroup btgGenre = new ButtonGroup();
+        final ButtonGroup btgGenero = new ButtonGroup();
         
-        JLabel lblGenre = new JLabel("Genero");
-        lblGenre.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblGenre.setBounds(29, 119, 78, 14);
-        add(lblGenre);
+        JLabel lblGenero = new JLabel("Genero:");
+        lblGenero.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblGenero.setBounds(15, 105, 78, 14);
+        add(lblGenero);
         
-        rdbtnMale = new JRadioButton("Daily");
-        btgGenre.add(rdbtnMale);
-        rdbtnMale.setSelected(true);
-        rdbtnMale.setBounds(169, 116, 96, 20);
-        add(rdbtnMale);
+        rdbtnMasculino = new JRadioButton("Masculino");
+        btgGenero.add(rdbtnMasculino);
+        rdbtnMasculino.setSelected(true);
+        rdbtnMasculino.setBounds(180, 105, 96, 20);
+        add(rdbtnMasculino);
 
         // Weekly option
-        rdbtnFemale = new JRadioButton("Weekly");
-        btgGenre.add(rdbtnFemale);
-        rdbtnFemale.setBounds(300, 116, 96, 20);
-        add(rdbtnFemale);
+        rdbtnFemenino = new JRadioButton("Femenino");
+        btgGenero.add(rdbtnFemenino);
+        rdbtnFemenino.setBounds(280, 105, 96, 20);
+        add(rdbtnFemenino);
     }
     private void make_field_birth() {
-        JLabel lblBirth = new JLabel("Fecha de nacimiento");
-        lblBirth.setFont(new Font("Tahoma", Font.BOLD, 11));
-        lblBirth.setBounds(29, 164, 78, 14);
-        add(lblBirth);
+        JLabel lblFechaNacimiento = new JLabel("Fecha de nacimiento:");
+        lblFechaNacimiento.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblFechaNacimiento.setBounds(15, 150, 150, 14);
+        add(lblFechaNacimiento);
         
-        String[] days = new String[31];
+        String[] dias = new String[31];
         for (int i = 0; i < 31; i++) {
-            days[i] = Integer.toString(i + 1);
+            dias[i] = String.format("%02d", (i + 1));
         }
-        cmbDay = new JComboBox<>(days);
+        cmbDia = new JComboBox<>(dias);
+        cmbDia.setBounds(180, 146, 50, 20);
+        add(cmbDia);
         
-        String[] months = { "January", "February", "March", "April", "May", "June", 
-                            "July", "August", "September", "October", "November", "December" };
-        cmbMonth = new JComboBox<>(months);
+        String[] meses = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+        cmbMes = new JComboBox<>(meses);
+        cmbMes.setBounds(247, 146, 50, 20);
+        add(cmbMes);
         
         String[] years = new String[25];
         for (int i = 0; i < 25; i++) {
             years[i] = Integer.toString(2000 + i);
         }
         cmbYear = new JComboBox<>(years);
+        cmbYear.setBounds(315, 146, 60, 20);
+        add(cmbYear);
+    }
+    private void make_field_address() {
+        JLabel lblDireccion = new JLabel("Direccion:");
+        lblDireccion.setFont(new Font("Tahoma", Font.BOLD, 11));
+        lblDireccion.setBounds(15, 195, 150, 14);
+        add(lblDireccion);
+        
+        txtDireccion = new JTextField();
+        txtDireccion.setBounds(180, 195, 196, 20);
+        add(txtDireccion);
+        txtDireccion.setColumns(10);
+    }
+    private void make_field_term_condition() {
+        cbxTerminosCondiciones = new JCheckBox("Aceptar Terminos y Condiciones");
+        cbxTerminosCondiciones.setBounds(15, 230, 300, 14);
+        add(cbxTerminosCondiciones);
     }
     
+    
+    private void make_btn_register() {
+        JButton btnRegister = new JButton("Registrar");
+        btnRegister.setBounds(180, 275, 89, 23);
+        add(btnRegister);
+        
+        btnRegister.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                if(txtNombre.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(NewGuestView.this, "El nombre es obligatorio.", "Error", JOptionPane.ERROR_MESSAGE);
+                    txtNombre.requestFocus();
+                    return;
+                } else if(txtNumero.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(NewGuestView.this, "El numero celular es obligatorio.", "Error", JOptionPane.ERROR_MESSAGE);
+                    txtNumero.requestFocus();
+                    return;
+                } else if(txtDireccion.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(NewGuestView.this, "La direccion es obligatoria.", "Error", JOptionPane.ERROR_MESSAGE);
+                    txtDireccion.requestFocus();
+                    return;
+                } else {
+                    Guest guest = new Guest();
+
+                    guest.setNombre(txtNombre.getText());
+                    guest.setNumero(txtNumero.getText());
+                    if(rdbtnMasculino.isSelected()) {
+                        guest.setGenero("Masculino");
+                    } else if(rdbtnFemenino.isSelected()) {
+                        guest.setGenero("Femenino");
+                    }
+
+                    String birth = cmbDia.getSelectedItem().toString() + "/" + 
+                            String.format("%02d", cmbMes.getSelectedIndex()+1) + "/" + 
+                            cmbYear.getSelectedItem().toString();
+                    guest.setFechaNacimiento(SchedulerUtil.getDateFromString(birth));
+                    guest.setDireccion(txtDireccion.getText());
+                    guest.setTerminosCondiciones(cbxTerminosCondiciones.isSelected());
+
+                    newGuestController.addGuest(guest);
+                    JOptionPane.showMessageDialog(NewGuestView.this, "El invitado " + guest.getNombre() + " fue ingresado correctamente.", "Exito", JOptionPane.INFORMATION_MESSAGE);
+                    cleanFields();
+                }
+            }
+        });
+    }
     private void make_btn_clean() {
-        JButton btnClean = new JButton("Clean");
-        btnClean.setBounds(253, 220, 89, 23);
+        JButton btnClean = new JButton("Resetear");
+        btnClean.setBounds(285, 275, 89, 23);
         add(btnClean);
         
         btnClean.addActionListener(new ActionListener() {

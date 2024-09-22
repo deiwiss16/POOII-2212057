@@ -1,0 +1,2 @@
+Carlos Martin Quispe;975599107;Masculino;04/18/2003;Av Ate;true
+Martin Bartolo;996909720;Masculino;01/18/2004;Av Los Claves;true
